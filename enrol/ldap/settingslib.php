@@ -195,3 +195,24 @@ class admin_setting_ldap_rolemapping extends admin_setting {
                                     $this->description, true, '', '', $query);
     }
 }
+
+class enrol_ldap_admin_setting_category extends admin_setting_configselect {
+    public function __construct($name, $visiblename, $description) {
+        parent::__construct($name, $visiblename, $description, null, null);
+    }
+
+    public function load_choices() {
+        global $CFG;
+        if (is_array($this->choices)) {
+            return true;
+        }
+
+        require_once($CFG->dirroot.'/course/lib.php');
+        $options = array();
+        $parentlist = array();
+        make_categories_list($options, $parentlist);
+        $this->choices = $options;
+        $this->defaultsetting = key($options);
+        return true;
+    }
+}
