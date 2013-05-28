@@ -162,6 +162,19 @@ switch($requestmethod) {
                         if (!empty($module->name)) {
                             $DB->update_record($cm->modname, $module);
                             rebuild_course_cache($cm->course);
+
+                            // Raise event - MDL-39393.
+                            $eventdata = new stdClass();
+                            $eventdata->modulename = $cm->modname;
+                            $eventdata->name       = $module->name;
+                            $eventdata->cmid       = $id;
+                            $eventdata->courseid   = $courseid;
+                            $eventdata->userid     = $USER->id;
+                            events_trigger('mod_updated', $eventdata);
+
+                            add_to_log($courseid, "course", "update mod",
+                                    "../mod/{$cm->modname}/view.php?id=$id",
+                                    "{$cm->modname} $id");
                         } else {
                             $module->name = $cm->name;
                         }
