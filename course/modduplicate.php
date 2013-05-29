@@ -120,6 +120,23 @@ if ($newcmid) {
     $newcm = get_coursemodule_from_id('', $newcmid, $course->id, true, MUST_EXIST);
     moveto_module($newcm, $section, $cm);
     moveto_module($cm, $section, $newcm);
+
+    // MDL-39883 raise mod_duplicated event.
+    $eventdata = new stdClass();
+    $eventdata->modulename = $newcm->modname;
+    $eventdata->name       = $newcm->name;
+    $eventdata->cmid       = $newcm->id;
+    $eventdata->origcmid   = $cm->id;
+    $eventdata->courseid   = $newcm->course;
+    $eventdata->userid     = $USER->id;
+    events_trigger('mod_duplicated', $eventdata);
+
+    $lurl = new moodle_url("../mod/{$newcm->modname}/view.php", array('id' => $newcm->id));
+    add_to_log($newcm->course,
+               "course",
+               "duplicate mod",
+               $lurl->out(),
+               "{$newcm->modname} origid:{$cm->id} newid:{$newcm->id}");
 }
 
 $rc->destroy();
