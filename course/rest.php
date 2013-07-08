@@ -173,7 +173,7 @@ switch($requestmethod) {
                             events_trigger('mod_updated', $eventdata);
 
                             add_to_log($courseid, "course", "update mod",
-                                    "../mod/{$cm->modname}/view.php?id=$id",
+                                    "{$CFG->wwwroot}/mod/{$cm->modname}/view.php?id=$id",
                                     "{$cm->modname} $id");
                         } else {
                             $module->name = $cm->name;
