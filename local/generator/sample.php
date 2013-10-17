@@ -4,13 +4,14 @@ require('../../config.php');
 
 if (!class_exists('mr_bootstrap')) {
     $plugindir = null;
+    $component = 'local_mr';
     // Support both Moodle 2.6+ and earlier versions.
-    if (is_callable('core_component::get_plugin_directory')) {
-        $plugindir = core_component::get_plugin_directory('local', 'mr');
+    if (is_callable('core_component::get_component_directory')) {
+        $plugindir = core_component::get_component_directory($component);
     } else {
-        $plugindir = get_plugin_directory('local', 'mr');
+        $plugindir = get_component_directory($component);
     }
-    if (empty($plugindir)) {
+    if (empty($plugindir) || !is_readable($plugindir)) {
         print_error('modulemissingcode', 'error', '', 'Generator depends on MR framework and');
     }
     require($plugindir.'/bootstrap.php');
